@@ -80,17 +80,31 @@ chore: configure ESLint
 - Add loading, error, and empty states for data-driven screens.
 - Update documentation when adding a new feature, route, or shared component.
 
+## Tests and checks
+
+Unit and component tests use Vitest and React Testing Library. Add focused tests for new behavior and bug fixes in 
+`tests/unit/`, organized by feature or application area. The `tests/e2e/` directory is reserved for end-to-end tests; 
+no end-to-end test runner is configured yet.
+
+Run the automated checks locally before opening a pull request:
+
+```bash
+npm run lint
+npm test
+npm run build
+```
+
+To run tests in watch mode while developing:
+
+```bash
+npm run test:watch
+```
+
 ## Pull requests
 
 1. Create a branch from `main`.
 2. Make small, focused changes.
-3. Run the available checks:
-
-```bash
-npm run lint
-npm run build
-```
-
+3. Run the checks described in [Tests and checks](#tests-and-checks).
 4. Update the relevant documentation.
 5. Push your branch to your fork and open a pull request against `BIMdevB2/KitchenScript`'s `main` branch, 
     using the template below.

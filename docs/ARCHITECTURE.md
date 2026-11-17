@@ -80,9 +80,15 @@ kitchenscript/
 │   └── main.jsx
 │
 ├── tests/
-│   ├── e2e/
+│   ├── setup.js
+│   ├── e2e/             # Reserved for end-to-end tests
 │   └── unit/
+│       └── app/
+│           └── App.test.jsx
 │
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── .env.example
 ├── .gitignore
 ├── eslint.config.js
@@ -91,6 +97,17 @@ kitchenscript/
 ├── README.md
 └── vite.config.js
 ```
+
+## Tests
+
+Unit and component tests use Vitest, jsdom, and React Testing Library. Place them in `tests/unit/`, 
+organized by application area or feature. The shared `tests/setup.js` file loads the Testing Library matchers 
+and is configured in `vite.config.js`.
+
+The `tests/e2e/` directory is reserved for end-to-end tests; an end-to-end test runner is not configured yet.
+
+The GitHub Actions workflow at `.github/workflows/ci.yml` runs the lint, test, and production build checks for pushes 
+to `main` and pull requests targeting `main`.
 
 ## Application layer
 
