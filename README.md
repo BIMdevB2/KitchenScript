@@ -41,19 +41,24 @@ npm run dev
 
 ## Project organization
 
-The project uses a **feature-based** structure. Each business domain contains its own pages, components, hooks, and API calls.
+The project is organized by **layer**. Pages, components, hooks, and API modules are grouped in separate folders, with domain subfolders to keep related code easy to find. Reusable, cross-cutting code belongs in `shared/`.
 
 ```text
 src/
-├── app/        # Entry point, routes, providers, and layouts
-├── features/   # Business domains: recipes, search, favorites, etc.
-├── shared/     # Reusable UI components, hooks, utilities, and API client
-├── mocks/      # Mocked data before the backend is available
-├── assets/     # Images, icons, and static assets
-└── styles/     # Global styles and design tokens
+├── app/                 # Application assembly, routes, and providers
+├── context/             # Shared application context
+├── layouts/             # Application layouts
+├── components/<domain>/ # Domain-specific UI components
+├── pages/<domain>/      # Screens associated with routes
+├── hooks/<domain>/      # Domain state and action logic
+├── api/<domain>/        # Domain data access
+├── shared/              # Reusable UI, hooks, API utilities, and styles
+├── mocks/               # Mock data before the backend is available
+├── assets/              # Images, icons, and static assets
+└── *.css                # Global styles
 ```
 
-For the detailed folder organization, naming conventions, and dependency rules, see the [ARCHITECTURE](docs/ARCHITECTURE.md) file.
+For the detailed folder organization, naming conventions, and dependency rules, see [ARCHITECTURE](docs/ARCHITECTURE.md).
 
 ## Git workflow
 

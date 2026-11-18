@@ -4,12 +4,12 @@
 
 KitchenScript is a React frontend application for discovering, searching, creating, and preparing recipes.
 
-The application is organized by **features**: each business domain contains the pages, components, hooks, and API calls specific to it. 
-Truly cross-cutting elements are placed in `shared/`.
+The application is organized by **layer**: pages, components, hooks, and API modules are grouped in their own top-level folders.
+Within each layer, domain subfolders keep related code easy to find. Truly cross-cutting elements are placed in `shared/`.
 
 The backend and database are not available yet. 
-Files in `api/` currently consume data from `src/mocks/` and will call the REST API once it is ready.
-This document describes the frontend architecture in use now and the integration boundary for that future backend; the REST API, services, and database are not part of the current application.
+API modules are the boundary between the frontend and its data sources. They can use mock data while the backend is unavailable and be connected to the REST API when it is ready.
+This document describes the frontend structure and the integration boundary for that future backend; the REST API, services, and database are not part of the current application.
 
 ## High-level architecture
 
@@ -20,16 +20,16 @@ User
 React Page
  │
  ▼
-Feature hook
+Domain hook
  │
  ▼
-api/ file
+Domain API module
  │
  ├── src/mocks/        # Today
  └── REST API backend  # Later
 ```
 
-A page must not call mocks or the backend directly. It calls a hook, which calls a function from its feature’s `api/` file.
+A page must not call mocks or the backend directly. It calls a hook, which calls the corresponding domain API module.
 
 ## Project structure
 
@@ -42,14 +42,50 @@ kitchenscript/
 │   ├── app/
 │   │   ├── App.jsx
 │   │   ├── router.jsx
-│   │   ├── providers.jsx
-│   │   └── layouts/
-│   │       ├── AuthLayout.jsx
-│   │       ├── AppLayout.jsx
-│   │       ├── AdminLayout.jsx
-│   │       └── AppLayout.module.css
+│   │   └── providers.jsx
 │   │
-│   ├── features/
+│   ├── context/
+│   │
+│   ├── layouts/
+│   │   ├── AuthLayout.jsx
+│   │   ├── AppLayout.jsx
+│   │   └── AdminLayout.jsx
+│   │
+│   ├── components/
+│   │   ├── auth/
+│   │   ├── discovery/
+│   │   ├── recipes/
+│   │   ├── search/
+│   │   ├── cooking/
+│   │   ├── favorites/
+│   │   ├── categories/
+│   │   ├── profile/
+│   │   └── admin/
+│   │
+│   ├── api/
+│   │   ├── auth/
+│   │   ├── discovery/
+│   │   ├── recipes/
+│   │   ├── search/
+│   │   ├── cooking/
+│   │   ├── favorites/
+│   │   ├── categories/
+│   │   ├── profile/
+│   │   └── admin/
+│   │
+│   ├── pages/
+│   │   ├── auth/
+│   │   ├── discovery/
+│   │   ├── recipes/
+│   │   ├── search/
+│   │   ├── cooking/
+│   │   ├── favorites/
+│   │   ├── categories/
+│   │   ├── profile/
+│   │   ├── admin/
+│   │   └── error/
+│   │
+│   ├── hooks/
 │   │   ├── auth/
 │   │   ├── discovery/
 │   │   ├── recipes/
@@ -62,7 +98,6 @@ kitchenscript/
 │   │
 │   ├── shared/
 │   │   ├── ui/
-│   │   ├── layout/
 │   │   ├── api/
 │   │   ├── hooks/
 │   │   └── styles/
@@ -100,13 +135,13 @@ kitchenscript/
 
 ## Tests
 
-Unit and component tests use Vitest, jsdom, and React Testing Library. Place them in `tests/unit/`, 
-organized by application area or feature. The shared `tests/setup.js` file loads the Testing Library matchers 
+Unit and component tests use Vitest, jsdom, and React Testing Library. Place them in `tests/unit/`,
+organized by domain or application area. The shared `tests/setup.js` file loads the Testing Library matchers
 and is configured in `vite.config.js`.
 
 The `tests/e2e/` directory is reserved for end-to-end tests; an end-to-end test runner is not configured yet.
 
-The GitHub Actions workflow at `.github/workflows/ci.yml` runs the lint, test, and production build checks for pushes 
+The GitHub Actions workflow at `.github/workflows/ci.yml` runs the lint, test, and production build checks for pushes
 to `main` and pull requests targeting `main`.
 
 ## Application layer
@@ -119,7 +154,7 @@ The `src/app/` folder contains the global application assembly.
 | `App.jsx` | Composes providers and the router |
 | `router.jsx` | Declares application routes |
 | `providers.jsx` | Global providers: theme, session, queries, etc. |
-| `layouts/` | Public, authenticated, and admin layouts |
+| `src/layouts/` | Public, authenticated, and admin layouts |
 
 ### Routes
 
@@ -145,11 +180,11 @@ The `src/app/` folder contains the global application assembly.
 
 Routes are declared in `app/router.jsx`. Protected routes use `AuthGuard` or `AdminRoute` to verify the user’s session and role.
 
-## Features
+## Domain areas
 
-Each feature is a self-contained module focused on a business domain.
+Domain areas are represented consistently across `components/`, `pages/`, `hooks/`, and `api/`. A domain folder contains only files for that layer.
 
-| Feature | Responsibility |
+| Domain | Responsibility |
 |---|---|
 | `auth` | Registration, login, logout, session, and route guards |
 | `discovery` | Home page, featured recipes, and suggestions |
@@ -161,17 +196,16 @@ Each feature is a self-contained module focused on a business domain.
 | `profile` | User profile and dietary preferences |
 | `admin` | Dashboard, moderation, users, and categories |
 
-### Standard feature layout
+### Domain folders
 
-A feature may contain the following folders, only when needed:
+Create a domain subfolder only in the layers it needs:
 
 ```text
-features/<feature>/
-├── pages/              # Screens associated with a route
-├── components/         # Domain-specific components
-├── hooks/              # State, loading, and action logic
-├── api/                # Calls to mocks today and the REST API later
-└── index.js            # Public interface of the feature
+src/
+├── pages/<domain>/      # Screens associated with routes
+├── components/<domain>/ # Domain-specific UI components
+├── hooks/<domain>/      # State, loading, and action logic
+└── api/<domain>/        # Data access for the domain
 ```
 
 ## Shared layer
@@ -181,12 +215,11 @@ The `src/shared/` folder contains only truly reusable code.
 | Folder | Content |
 |---|---|
 | `ui/` | `Button`, `Input`, `Select`, `Modal`, `Badge`, `Skeleton`, `EmptyState` |
-| `layout/` | `Header`, `Footer`|
 | `api/` | HTTP client and base configuration |
 | `hooks/` | Generic hooks: debounce, localStorage, media queries |
 | `styles/` | Design tokens and global styles |
 
-`shared/` must never import a file from `features/`.
+`shared/` must not depend on domain-specific code or the application layer.
 
 ## Mock data
 
@@ -202,7 +235,7 @@ While the backend is unavailable, data comes from `src/mocks/`.
 
 Only `api/` files are allowed to import mocks.
 
-When the backend becomes available, each feature API module that uses mocks will be connected to the REST API through the shared HTTP client. Hooks and pages should remain independent of the data source as long as the mock and REST implementations honor the same data contracts. Authentication and shared error handling may also need to be connected to the backend.
+When the backend becomes available, each domain API module that uses mocks will be connected to the REST API through the shared HTTP client. Hooks and pages should remain independent of the data source as long as the mock and REST implementations honor the same data contracts. Authentication and shared error handling may also need to be connected to the backend.
 
 ### Data contracts
 
@@ -246,7 +279,7 @@ The shared HTTP client normalizes API errors before they reach hooks and pages.
 ```text
 RecipeDetailPage
   → useRecipe(recipeId)
-    → recipes.api.js
+    → api/recipes/
       → mocks/recipes.js
 ```
 
@@ -258,7 +291,7 @@ The page displays a loading state while the recipe is being fetched, then displa
 RecipeCreatePage
   → RecipeForm
     → useRecipeForm
-      → recipes.api.js
+      → api/recipes/
         → mocks/recipes.js
 ```
 
@@ -292,9 +325,12 @@ The following rules must be respected in forms and frontend validation.
 
 | Layer | Can import | Must not import |
 |---|---|---|
-| `shared/` | Its own files and npm dependencies | `features/`, `app/` |
-| `features/<domain>/` | `shared/`, its own code | Internal files from another feature |
-| `app/` | `features/`, `shared/` | Internal files from a feature |
+| `shared/` | Its own files and npm dependencies | Domain folders, `app/` |
+| `api/<domain>/` | Its domain data and `shared/api/` | Pages, components, hooks |
+| `hooks/<domain>/` | Its domain API and `shared/` | Pages and components |
+| `components/<domain>/` | Its domain components and `shared/ui/` | API modules |
+| `pages/<domain>/` | Its domain components/hooks and `shared/` | API modules and mocks |
+| `app/` | Pages, layouts, `context/`, and `shared/` | Domain components, hooks, and API modules directly |
 
 ### Rules
 
@@ -302,6 +338,6 @@ The following rules must be respected in forms and frontend validation.
 - A component must not call an `api/` file directly.
 - A hook calls an `api/` file.
 - An `api/` file calls mocks or, later, the HTTP client.
-- Imports between features go through their `index.js`.
+- Keep imports within a domain where practical; move genuinely reusable behavior to `shared/`.
 - Generic components belong in `shared/ui/`.
-- Domain components remain in their feature.
+- Domain components remain in `components/<domain>/`.

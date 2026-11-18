@@ -73,17 +73,22 @@ chore: configure ESLint
 
 - Use JavaScript and JSX, following the existing project style.
 - Keep components focused on presentation and user interaction.
-- Put business logic and data access in hooks and `api/` files.
+- Put domain-specific components in `src/components/<domain>/`, pages in `src/pages/<domain>/`,
+  hooks in `src/hooks/<domain>/`, and data access modules in `src/api/<domain>/`.
+- Put business logic in hooks and data access in API modules.
 - Keep reusable UI components in `src/shared/ui/`.
-- Keep domain-specific components inside their feature.
-- Do not import internal files from another feature; use its `index.js` public entry point when needed.
+- Keep application-wide layouts in `src/layouts/` and global providers in `src/app/providers.jsx`;
+  use `src/context/` for shared application context.
+- Pages compose components and hooks; components must not call API modules directly, and only API
+  modules should access mocks or the backend.
+- Keep imports between domains limited; move genuinely reusable code to `src/shared/` rather than duplicating it.
 - Add loading, error, and empty states for data-driven screens.
 - Update documentation when adding a new feature, route, or shared component.
 
 ## Tests and checks
 
 Unit and component tests use Vitest and React Testing Library. Add focused tests for new behavior and bug fixes in 
-`tests/unit/`, organized by feature or application area. The `tests/e2e/` directory is reserved for end-to-end tests; 
+`tests/unit/`, organized by domain or application area. The `tests/e2e/` directory is reserved for end-to-end tests;
 no end-to-end test runner is configured yet.
 
 Run the automated checks locally before opening a pull request:
