@@ -1,26 +1,20 @@
 import '../App.css'
-import { Link } from 'react-router'
 import AppRouter from './router.jsx'
+import Header from '../shared/layouts/Header'
+import Footer from '../shared/layouts/Footer'
 
 function App() {
     return (
         <div className="app">
             <header>
-                <nav aria-label="Navigation principale">
-                    <Link to="/">Accueil</Link>{' | '}
-                    <Link to="/recipes">Recettes</Link>{' | '}
-                    <Link to="/search">Recherche</Link>{' | '}
-                    <Link to="/categories">Catégories</Link>{' | '}
-                    <Link to="/favorites">Favoris</Link>{' | '}
-                    <Link to="/profile">Profil</Link>{' | '}
-                    <Link to="/register">Inscription</Link>{' | '}
-                    <Link to="/login">Connexion</Link>{' | '}
-                    <Link to="/admin">Administration</Link>
-                </nav>
+                <Header />
             </header>
-            <main>
+            <main className='container'>
                 <AppRouter />
             </main>
+            <footer>
+                <Footer />
+            </footer>
         </div>
     )
 }
