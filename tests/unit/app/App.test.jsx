@@ -31,6 +31,6 @@ describe('App', () => {
             </MemoryRouter>,
         )
 
-        expect(getByRole('heading', { name: 'Page introuvable' })).toBeTruthy()
+        expect(getByRole('heading', { name: '404'})).toBeTruthy()
     })
 })
