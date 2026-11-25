@@ -12,6 +12,7 @@ import ProfilePage from '../pages/profile/ProfilePage.jsx'
 import AdminPage from '../pages/admin/AdminPage.jsx'
 import NotFoundPage from '../pages/error/NotFoundPage.jsx'
 import ForbiddenPage from '../pages/error/ForbiddenPage.jsx'
+import ServerErrorPage from '../pages/error/ServerErrorPage.jsx'
 
 export default function AppRouter() {
     return (
@@ -28,7 +29,8 @@ export default function AppRouter() {
             <Route path="/admin" element={<AdminPage />} />
             <Route path="*" element={<NotFoundPage />} />
             <Route path="/403" element={<ForbiddenPage />} />
-            <Route path="*" element={<NotFoundPage />} />
+            <Route path="/500" element={<ServerErrorPage />} />
+            
         </Routes>
     )
 }
