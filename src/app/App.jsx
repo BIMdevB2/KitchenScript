@@ -9,7 +9,7 @@ function App() {
             <header>
                 <Header />
             </header>
-            <main className='container'>
+            <main className='my-4'>
                 <AppRouter />
             </main>
             <footer>
