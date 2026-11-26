@@ -9,7 +9,7 @@ const navigationLinks = [
 
 function Header() {
     return (
-        <nav className="site-header" aria-label="Main navigation">
+        <nav className="site-header" aria-label="Header navigation">
             <div className="site-header__inner">
                 <Link className="brand" to="/" aria-label="KitchenScript home">
                     {/* <img src="" alt="" /> */}
